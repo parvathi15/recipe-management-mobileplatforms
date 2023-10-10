@@ -1,62 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Management</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-</style>
-<body>
-    <h1>Recipe Management</h1>
-    <table id="api-table">
-    <thead>
-      <tr>
-        <th>recipeid</th>
-        <th>Name</th>
-        <th>Incredients</th>
-        <th>Description</th>
-        <th>Cooking Time</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-    <!-- <script type = "text/javascript" src="script.js"></script> -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <title>Hello, world!</title>
+  </head>
+  <style>
+    .card {
+      margin-left:12px;
+      margin-bottom:12px;
+    }
+    .card h2 {
+      color:#dd0d0dd4;
+    }
+    .card .bold {
+      color:#686565b8;
+    }
+    .nav-item {
+      color:#333;
+    }
+  </style>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" style = "font-weight:600;color:#dd0d0dd4">Recipe Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+          
+          <ul class="navbar-nav ms-auto navbar-nav-scroll">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About Me</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <form style="display:flex;">
+      <div class="input-group mb-3 mt-3 ml-2">
+        <input type="text" class="form-control" id = "searchInput" placeholder="Search Recipes">
+      </div>
+    </form>
+
+    <div class="col-md-12" style="margin-bottom:2rem;">
+      <div class="card-body" >
+      <div class="card-container" id="cardContainer">
+     </div>
+    </div>
+    <script>
+        // Get the card container and input field
+        const cardContainer = document.getElementById('cardContainer');
+        const input = document.getElementById('searchInput');
+
+        // Function to fetch data and create cards
+        async function fetchDataAndCreateCards() {
+            try {
+                const response = await axios.get('http://localhost:7000/recipes');
+                const data = response.data;
+                console.log(data);
+
+                // Clear existing cards
+                cardContainer.innerHTML = '';
+
+                // Create cards for each data item
+                data.map(user => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<h2>${user.title}</h2><p class = "bold"><b>Description:</b></p><p> ${user.description}</p>
+                    <p class = "bold"><b>Ingredients:</b></p><p>${user.ingredients}</p>`;
+                    cardContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Initial data fetch and card creation
+        fetchDataAndCreateCards();
+
+        // Add an input event listener for filtering and searching
+        input.addEventListener('input', function () {
+            const searchText = input.value.toLowerCase();
+            const cards = cardContainer.getElementsByClassName('card');
+
+            // Loop through all cards and hide/show based on the search query
+            Array.from(cards).forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(searchText)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-<script>
-
-fetch("http://localhost:7000/recipes")
-.then((data)=> {
-return data.json();
-}).then((completedata)=>{
-    document.querySelector('#api-table tbody').innerHTML = 
-    completedata.map(item => 
-          `<tr>
-            <td>${item.recipeid}</td>
-            <td>${item.title}</td>
-            <td>${item.ingredients}</td>
-            <td>${item.description}</td>
-              <td>${item.cookingtime}</td>
-          </tr>`
-          ).join('')
-      })  
-.catch(error => {
-console.error("Error fetching, error");
-});
-</script>
