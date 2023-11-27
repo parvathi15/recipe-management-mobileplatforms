@@ -29,9 +29,16 @@ connection.once("open", () => {
 const recipeRouter = require("./routes/recipe.js");
 app.use("/recipes", recipeRouter);
 
+// Serve static files from the views directory
+app.use(express.static('views'));
+
 app.get('/',(req,res) => {
   res.sendFile(__dirname + '/views/recipe.html');
 })
+// Route for the about page
+app.get('/aboutme.html', (req, res) => {
+  res.sendFile(__dirname + '/views/aboutme.html');
+});
 //connection to routes
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
