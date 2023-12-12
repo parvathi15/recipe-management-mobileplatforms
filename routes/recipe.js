@@ -41,7 +41,7 @@ router.route("/:id").delete((req, res) => {
     .catch(err => res.status(400).json("Error: " + err));
 });
 
-router.route("/update/:id").put((req, res) => {
+router.route("/:id").put((req, res) => {
     Recipe.findById(req.params.id)
     .then(recipe => {
         recipe.recipeid = Number(req.body.recipeid);
