@@ -67,7 +67,7 @@
         // Function to fetch data and create cards
         async function fetchDataAndCreateCards() {
             try {
-                const response = await axios.get('http://localhost:7000/recipes');
+                const response = await axios.get('https://recipe-management-ll.onrender.com/recipes/recipes');
                 const data = response.data;
                 console.log(data);
 
